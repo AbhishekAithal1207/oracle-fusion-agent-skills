@@ -1,0 +1,4 @@
+interface:
+  display_name: "Oracle Fusion Query Optimizer"
+  short_description: "Review and rewrite Fusion SQL safely"
+  default_prompt: "Use $oracle-fusion-query-optimizer to review this Oracle Fusion BI Publisher SQL, rank improvements, and create a V2 rewrite after I approve the change table."
