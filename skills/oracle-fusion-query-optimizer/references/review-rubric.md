@@ -23,7 +23,7 @@ Use this file to rank improvement suggestions and control the approval flow.
 
 ## Mandatory Review Checks
 
-- Confirm the result grain: one row per invoice, line, distribution, person, assignment, payroll result, or other grain.
+- Confirm the result grain: one row per invoice, invoice line, distribution, purchase order, PO line, PO distribution, requisition, requisition line, receipt transaction, item, item organization, inventory transaction, sales order, fulfillment line, shipment, person, assignment, payroll result, or other grain.
 - Identify duplicate risk from one-to-many joins and missing aggregation.
 - Identify outer joins and preserve null-producing behavior.
 - Review filter selectivity and whether filters use active index leading columns.
@@ -31,6 +31,9 @@ Use this file to rank improvement suggestions and control the approval flow.
 - Check HCM date-effective joins on `EFFECTIVE_START_DATE` and `EFFECTIVE_END_DATE`.
 - Check HCM tenant and security filters, especially `BUSINESS_GROUP_ID`.
 - Check Financials tenant/scope filters such as `ORG_ID`, ledger, legal entity, business unit, supplier, invoice date, and status.
+- Check Procurement tenant/scope filters such as `PRC_BU_ID`, `REQ_BU_ID`, `ORG_ID`, supplier, requester, buyer/procurement agent, document status, approval status, creation date, and receiving status.
+- Check SCM tenant/scope filters such as `ORGANIZATION_ID`, `INVENTORY_ORGANIZATION_ID`, `INVENTORY_ITEM_ID`, business unit, transaction date, subinventory, locator, lot, serial, fulfillment status, shipment status, and language.
+- Check many-side joins from PO/requisition lines, schedules, distributions, receipts, inventory transactions, fulfillment lines, shipping details, costing rows, and translation rows before projecting header-level amounts.
 - Check whether any function is applied to a column in `WHERE` or `JOIN`.
 - Check `NOT IN` with nullable subquery columns; prefer null-safe anti-join or `NOT EXISTS` when equivalent.
 - Check `SELECT *`, unused columns, excessive flexfield columns, and verbose aliases in BI Publisher reports.

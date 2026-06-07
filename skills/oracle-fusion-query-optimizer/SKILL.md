@@ -1,11 +1,11 @@
 ---
 name: oracle-fusion-query-optimizer
-description: Review and rewrite Oracle Fusion SaaS SQL for BI Publisher, OTBI extracts, ERP Financials, and HCM tables. Use when asked to tune, optimize, refactor, validate, or create a V2 version of Oracle Fusion SQL using table DDL, Oracle documentation, indexes, explain plans, bind parameters, or BI Publisher performance best practices.
+description: Review and rewrite Oracle Fusion SaaS SQL for BI Publisher, OTBI extracts, ERP Financials, HCM, Procurement, and SCM tables. Use when asked to tune, optimize, refactor, validate, or create a V2 version of Oracle Fusion SQL using table DDL, Oracle documentation, indexes, explain plans, bind parameters, or BI Publisher performance best practices.
 ---
 
 # Oracle Fusion Query Optimizer
 
-Use this skill to review Oracle Fusion SQL with source-backed caution: inspect table metadata, DDL, indexes, bind parameters, BI Publisher constraints, and HCM date-effective behavior before suggesting or writing changes.
+Use this skill to review Oracle Fusion SQL with source-backed caution: inspect table metadata, DDL, indexes, bind parameters, BI Publisher constraints, and module-specific behavior for Financials, HCM, Procurement, and SCM before suggesting or writing changes.
 
 ## Required Workflow
 
@@ -20,7 +20,7 @@ Use this skill to review Oracle Fusion SQL with source-backed caution: inspect t
 4. Extract table names and aliases. For long SQL, run `scripts/fusion_sql_review.py --sql-file <file>` to produce a starter review skeleton. If a SQL Tuning Advisor report is available, run `scripts/fusion_sql_review.py --sql-file <file> --advisor-file <txt-file>`.
 5. Read the relevant references only as needed:
    - [Review rubric](references/review-rubric.md) for ranking, required output tables, approval gates, and V2 behavior.
-   - [Oracle Fusion source discovery](references/source-discovery.md) for official table documentation lookup across Financials and HCM.
+   - [Oracle Fusion source discovery](references/source-discovery.md) for official table documentation lookup across Financials, HCM, Procurement, and SCM.
    - [Fusion SQL performance patterns](references/fusion-sql-performance.md) for BI Publisher and Oracle SQL tuning checks.
    - [SQL Tuning Advisor reports](references/sql-tuning-advisor.md) when the user provides a tuning advisor `.txt`, SQL ID, SQL Monitor/Tuning Advisor finding, or advisor recommendation.
    - [Platform compatibility](references/platform-compatibility.md) when the user asks how to install or reuse this skill across Codex, Claude, VS Code, Cursor, or Antigravity.
@@ -76,7 +76,7 @@ When the user approves changes:
 - Do not recommend adding or dropping indexes, accepting SQL profiles, gathering optimizer statistics, or creating plan baselines in Fusion SaaS as the primary fix unless the user controls the database or can route the action to a DBA/Oracle SR. Usually suggest query/index-aligned rewrites instead.
 - Do not blindly apply SQL Tuning Advisor output. Treat advisor findings as strong evidence, but still verify behavior, Fusion SaaS supportability, security views, bind values, and report grain.
 - Do not replace secured views with base tables without warning that row-level security or delivered semantics can change.
-- Do not remove `ORG_ID`, `BUSINESS_GROUP_ID`, ledger, effective-date, status, language, or security filters unless the user approves the exact behavior change.
+- Do not remove `ORG_ID`, `BUSINESS_GROUP_ID`, `PRC_BU_ID`, `REQ_BU_ID`, `ORGANIZATION_ID`, `INVENTORY_ORGANIZATION_ID`, ledger, effective-date, status, language, or security filters unless the user approves the exact behavior change.
 - Do not blindly convert legacy `(+)` outer joins to ANSI joins; preserve null-preserving sides and test row counts.
 - Do not treat every full table scan as bad. Large selective tables, missing predicates, and bad cardinality need investigation; small lookup table full scans may be acceptable.
 - Avoid unsupported certainty. When no explain plan, row counts, or bind values are available, state the confidence and ask for evidence.

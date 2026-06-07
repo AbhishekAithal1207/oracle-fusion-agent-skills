@@ -10,6 +10,14 @@ Use official Oracle documentation first, then user-provided DDL/indexes, then ot
 - HCM tables and views: `https://docs.oracle.com/en/cloud/saas/human-resources/<release>/oedmh/`
 - Current HCM table search pattern: `site:docs.oracle.com/en/cloud/saas/human-resources/oedmh <TABLE_NAME>`
 - HCM examples: `PER_ALL_PEOPLE_F`, `PER_ALL_ASSIGNMENTS_M`, `PER_USERS`, `HR_ALL_ORGANIZATION_UNITS_F`.
+- Procurement tables and views: `https://docs.oracle.com/en/cloud/saas/procurement/<release>/oedmp/`
+- Procurement 25D index: `https://docs.oracle.com/en/cloud/saas/procurement/25d/oedmp/index.html`
+- Current Procurement table search pattern: `site:docs.oracle.com/en/cloud/saas/procurement/oedmp <TABLE_NAME>`
+- Procurement examples: `PO_HEADERS_ALL`, `PO_LINES_ALL`, `PO_DISTRIBUTIONS_ALL`, `POR_REQUISITION_HEADERS_ALL`, `POR_REQUISITION_LINES_ALL`, `RCV_SHIPMENT_HEADERS`, `RCV_SHIPMENT_LINES`.
+- SCM tables and views: `https://docs.oracle.com/en/cloud/saas/supply-chain-and-manufacturing/<release>/oedsc/`
+- SCM 26B index: `https://docs.oracle.com/en/cloud/saas/supply-chain-and-manufacturing/26b/oedsc/index.html`
+- Current SCM table search pattern: `site:docs.oracle.com/en/cloud/saas/supply-chain-and-manufacturing/oedsc <TABLE_NAME>`
+- SCM examples: `EGP_SYSTEM_ITEMS_B`, `EGP_SYSTEM_ITEMS_TL`, `INV_MATERIAL_TXNS`, `INV_ONHAND_QUANTITIES_DETAIL`, `RCV_TRANSACTIONS`, `DOO_HEADERS_ALL`, `DOO_LINES_ALL`, `WSH_DELIVERY_DETAILS`.
 - BI Publisher performance best practices: `https://docs.oracle.com/middleware/1221/bip/BIPDM/best_practices.htm`
 - SQL Tuning Advisor and DBMS_SQLTUNE report interpretation: Oracle Database SQL Tuning Guide and PL/SQL Packages and Types Reference for `DBMS_SQLTUNE.REPORT_TUNING_TASK`.
 
@@ -25,6 +33,8 @@ For every base table or delivered view that drives cardinality, collect:
 - Column data types and not-null flags for join/filter columns.
 - Index list, including uniqueness, column order, and active/obsolete status when shown.
 - HCM effective-date columns and tenant columns.
+- Procurement business-unit, procurement-agent, supplier, document status, and line/distribution grain columns.
+- SCM inventory organization, item, transaction, fulfillment, receiving, and lifecycle/status columns.
 - Comments that define business meaning, especially status flags and denormalized columns.
 
 ## Table Name Lookup Tips
@@ -34,6 +44,19 @@ For every base table or delivered view that drives cardinality, collect:
 3. For synonyms or views, search both the view and likely base tables.
 4. For HCM `_F`, `_M`, `_VL`, `_B`, and `_TL` objects, inspect whether the query needs effective dating, language rows, or current-row filtering.
 5. For Financials `ALL` tables, inspect `ORG_ID`, ledger, legal entity, supplier, status, invoice date, and primary key joins.
+6. For Procurement `PO_`, `POR_`, `PON_`, and `RCV_` objects, inspect header, line, schedule, distribution, receiving transaction, requester, supplier, business unit, and status columns before changing joins or filters.
+7. For SCM `EGP_`, `INV_`, `DOO_`, `WSH_`, `CST_`, `QP_`, and `RCV_` objects, inspect item and organization key pairs, fulfillment or shipment grain, transaction dates, inventory organization filters, status columns, and translation table language rows.
+
+## Module-Specific Documentation Targets
+
+Use these as starting points for official documentation lookup. Still verify the exact table page, release, keys, and indexes before relying on a relationship.
+
+| Module | Doc family | Common table families | Review focus |
+| --- | --- | --- | --- |
+| Financials | `oedmf` | `AP_`, `AR_`, `GL_`, `XLA_`, `HZ_`, `IBY_`, `ZX_` | Ledger, legal entity, business unit, supplier/customer, accounting date, invoice/payment grain, subledger accounting joins. |
+| HCM | `oedmh` | `PER_`, `HR_`, `PAY_`, `BEN_`, `ANC_` | Date-effective rows, `BUSINESS_GROUP_ID`, assignment/person grain, primary assignment, status, language rows. |
+| Procurement | `oedmp` | `PO_`, `POR_`, `PON_`, `RCV_`, `PJC_` when used by procurement flows | Purchase order, requisition, supplier, requester, procurement BU, requisition BU, header/line/schedule/distribution grain, receiving grain. |
+| SCM | `oedsc` | `EGP_`, `INV_`, `DOO_`, `WSH_`, `CST_`, `QP_`, `RCV_` | Item and organization keys, inventory organization, transaction grain, order fulfillment grain, shipment/delivery grain, costing, status, translation rows. |
 
 ## When Docs Are Not Enough
 

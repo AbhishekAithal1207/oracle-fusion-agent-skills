@@ -52,6 +52,26 @@ TRUNC(:p_as_of_date) BETWEEN effective_start_date AND effective_end_date
 - Keep `ORG_ID`, ledger, legal entity, date, source, status, and supplier filters where they define security or report scope.
 - Do not rely on obsolete indexes shown in docs.
 
+## Oracle Fusion Procurement Patterns
+
+- Confirm the expected purchasing grain before rewriting: purchase order header, line, schedule/location, distribution, requisition header, requisition line, requisition distribution, supplier, or receiving transaction.
+- Join PO and requisition header-to-line-to-distribution chains using documented primary and foreign keys; avoid joining only by document number or line number when surrogate IDs are available.
+- Keep procurement scope filters such as `PRC_BU_ID`, `REQ_BU_ID`, `ORG_ID`, supplier, requester, buyer/procurement agent, document status, approval status, creation date, and last update date when they define report scope.
+- Treat receiving tables as transaction-grain unless the report explicitly wants shipment or receipt header grain; pre-aggregate receipts before joining to PO or requisition header output.
+- Watch one-to-many joins from suppliers, sites, categories, distributions, projects, and receipts that can multiply PO or requisition amounts.
+- For status and lookup meaning columns, verify whether the query should use base status codes, lookup tables, or delivered views that already apply language/security semantics.
+- Do not replace delivered secured views with base procurement tables without warning about row-level security and delivered semantics.
+
+## Oracle Fusion SCM Patterns
+
+- Confirm the expected SCM grain before rewriting: item, item organization, on-hand quantity row, material transaction, sales order header, sales order line, fulfillment line, shipment/delivery detail, costing row, or receiving transaction.
+- For item master queries, treat `INVENTORY_ITEM_ID` plus `ORGANIZATION_ID` or `INVENTORY_ORGANIZATION_ID` as the key pattern unless the official docs for the specific object say otherwise.
+- Preserve inventory organization, item, business unit, status, transaction date, source type, subinventory, locator, lot, serial, and language filters when they define report scope.
+- Translation tables and views such as `_TL` or `_VL` can multiply item rows by language; keep language predicates or use delivered language-aware views when appropriate.
+- Pre-aggregate transaction, on-hand, costing, fulfillment, or shipment details before joining to item or order header output when the report grain is higher than the detail table grain.
+- Be careful when joining `RCV_` objects from Procurement and SCM flows; confirm whether the report wants receiving transaction, shipment header/line, PO distribution, or accounting/costing grain.
+- Do not assume item, order, shipping, or costing table relationships from naming alone. Verify keys, indexes, and comments in the official `oedsc` docs or live metadata.
+
 ## Oracle Fusion HCM Patterns
 
 - Most core HCM tables are date-effective. Current-row filters are usually required unless the user wants history or future rows.
